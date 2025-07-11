@@ -41,7 +41,7 @@ export default function Home() {
   const hasData = data.length > 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen bg-background text-foreground px-4">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
           <Landmark className="h-6 w-6 mr-2 text-primary" />
