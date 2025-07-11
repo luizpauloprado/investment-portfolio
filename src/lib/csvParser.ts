@@ -28,8 +28,8 @@ export function parseCSV(csvText: string): Investment[] {
         throw new Error(`Invalid numeric value for 'valor_investido' in row ${i+1}: ${row.valor_investido}`);
     }
 
-    const taxa_retorno_anual = parseFloat(row.taxa_retorno_anual);
-    if (isNaN(taxa_retorno_anual)) {
+    const taxa_retorno_anual_percent = parseFloat(row.taxa_retorno_anual);
+    if (isNaN(taxa_retorno_anual_percent)) {
         throw new Error(`Invalid numeric value for 'taxa_retorno_anual' in row ${i+1}: ${row.taxa_retorno_anual}`);
     }
 
@@ -42,7 +42,7 @@ export function parseCSV(csvText: string): Investment[] {
       subtipo: row.subtipo,
       emissor: row.emissor,
       valor_investido: valor_investido,
-      taxa_retorno_anual: taxa_retorno_anual,
+      taxa_retorno_anual: taxa_retorno_anual_percent / 100,
     });
   }
   
