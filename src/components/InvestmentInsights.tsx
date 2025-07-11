@@ -59,7 +59,7 @@ export default function InvestmentInsights({ data }: InvestmentInsightsProps) {
                             AI-Powered Insights
                         </CardTitle>
                         <CardDescription>
-                            Get an AI-generated summary of your portfolio's performance.
+                            Gere um resumo do portifolio usando IA.
                         </CardDescription>
                     </div>
                     <Button onClick={handleGetInsights} disabled={isPending} className="w-full sm:w-auto">
@@ -68,7 +68,7 @@ export default function InvestmentInsights({ data }: InvestmentInsightsProps) {
                         ) : (
                             <Sparkles className="mr-2 h-4 w-4" />
                         )}
-                        Generate Insights
+                        Gerar
                     </Button>
                 </div>
             </CardHeader>
@@ -76,7 +76,7 @@ export default function InvestmentInsights({ data }: InvestmentInsightsProps) {
                 {isPending && (
                     <div className="flex items-center justify-center p-8 rounded-md bg-muted/50">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="ml-4 text-muted-foreground">Generating your insights...</p>
+                        <p className="ml-4 text-muted-foreground">Analisando...</p>
                     </div>
                 )}
                 {error && (
@@ -91,7 +91,7 @@ export default function InvestmentInsights({ data }: InvestmentInsightsProps) {
                 )}
                  {!insights && !isPending && !error && (
                     <div className="text-center p-8 border-2 border-dashed rounded-md text-muted-foreground">
-                        Click "Generate Insights" to see an analysis of your portfolio.
+                        Click "Gerar" para ter uma análise do seu portifório.
                     </div>
                  )}
             </CardContent>

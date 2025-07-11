@@ -41,7 +41,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
             }
         });
 
-        return { date: currentDateStr, 'Total Value': cumulativeValue };
+        return { date: currentDateStr, 'Total': cumulativeValue };
     });
 
   }, [data]);
@@ -63,7 +63,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
     <Card>
       <CardHeader>
         <CardTitle>Portfolio Performance</CardTitle>
-        <CardDescription>Cumulative investment value over time, including annual returns.</CardDescription>
+        <CardDescription>Valor cumulativo durante o tempo com base na taxa de retorno anual.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
@@ -89,7 +89,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
               labelStyle={{ color: 'hsl(var(--foreground))' }}
             />
             <Legend wrapperStyle={{ color: 'hsl(var(--foreground))' }} />
-            <Line type="monotone" dataKey="Total Value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 2, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6 }} animationDuration={500} />
+            <Line type="monotone" dataKey="Total" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 2, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6 }} animationDuration={500} />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

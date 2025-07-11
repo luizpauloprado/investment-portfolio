@@ -57,10 +57,10 @@ export default function Home() {
                 <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
                   <UploadCloud className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="mt-4 text-2xl">Upload your Investment Data</CardTitle>
+                <CardTitle className="mt-4 text-2xl">Envie um arquivo .csv para ver o seu portifólio</CardTitle>
                 <CardDescription>
-                  Upload a .csv file to visualize your portfolio. <br />
-                  Expected columns: `data,subtipo,emissor,valor_investido,taxa_retorno_anual`
+                  Formato do arquivo: <br />
+                  `data,subtipo,emissor,valor_investido,taxa_retorno_anual`
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -74,7 +74,7 @@ export default function Home() {
                   />
                   <label htmlFor="csv-upload" className="w-full">
                     <Button asChild className="w-full cursor-pointer">
-                        <span>{fileName || "Choose a .csv file"}</span>
+                        <span>{fileName || "Escolhar um arquivo"}</span>
                     </Button>
                   </label>
                   {error && (
@@ -93,7 +93,7 @@ export default function Home() {
                 <h2 className="text-3xl font-bold font-headline">Portfolio Dashboard</h2>
                 <Button variant="outline" onClick={() => { setData([]); setFileName(''); setError(null); }}>
                     <UploadCloud className="mr-2" />
-                    Upload New File
+                    Novo arquivo
                 </Button>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
