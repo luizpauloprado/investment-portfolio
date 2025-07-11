@@ -16,15 +16,15 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
 
     const sortedData = [...data].sort((a, b) => parseISO(a.data).getTime() - parseISO(b.data).getTime());
     
-    const allDates = [...new Set(sortedData.map(d => d.data))].sort((a,b) => parseISO(a).getTime() - parseISO(b).getTime());
-
-    if (allDates.length === 0) return [];
+    const dateSet = new Set(sortedData.map(d => d.data));
 
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
-    if (!allDates.includes(todayString)) {
-        allDates.push(todayString);
-    }
+    dateSet.add(todayString);
+
+    const allDates = Array.from(dateSet).sort((a,b) => parseISO(a).getTime() - parseISO(b).getTime());
+    
+    if (allDates.length === 0) return [];
     
     return allDates.map(currentDateStr => {
         const currentDate = parseISO(currentDateStr);
