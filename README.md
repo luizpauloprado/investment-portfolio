@@ -43,3 +43,10 @@ The project follows a standard Next.js application structure with additional dir
     - `/src/hooks`: Contains custom React hooks.
     - `/src/lib`: Contains utility functions, types, and the CSV parser.
 
+## Screens
+- **View:** 
+<img width="769" height="1036" alt="Captura de Tela 2025-07-10 às 23 19 08" src="https://github.com/user-attachments/assets/208360ce-cb32-4c80-834e-01139bbe9bb7" />
+
+- **Upload:**
+<img width="765" height="382" alt="Captura de Tela 2025-07-10 às 23 19 28" src="https://github.com/user-attachments/assets/e29b10e6-a5d8-4f46-a71f-191de7eb8643" />
+
