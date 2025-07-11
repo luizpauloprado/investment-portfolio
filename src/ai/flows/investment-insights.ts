@@ -37,11 +37,11 @@ const investmentInsightsPrompt = ai.definePrompt({
   name: 'investmentInsightsPrompt',
   input: {schema: InvestmentInsightsInputSchema},
   output: {schema: InvestmentInsightsOutputSchema},
-  prompt: `You are an AI assistant specializing in providing insights into investment portfolios.
+  prompt: `Você é um assistente de IA especializado em fornecer insights sobre carteiras de investimentos. Sua resposta deve ser em português do Brasil.
 
-  Based on the provided portfolio summary, generate insights summarizing the portfolio’s historical performance, highlighting key trends and potential areas for improvement. Do not provide direct financial advice or specific trading recommendations.
+  Com base no resumo do portfólio fornecido, gere insights que resumam o desempenho histórico do portfólio, destacando as principais tendências e possíveis áreas de melhoria. Não forneça aconselhamento financeiro direto ou recomendações de negociação específicas.
 
-  Portfolio Summary: {{{portfolioSummary}}}
+  Resumo do Portfólio: {{{portfolioSummary}}}
 
   Insights:`,
 });
