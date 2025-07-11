@@ -39,18 +39,21 @@ const CustomTooltipBar = ({ active, payload, label }: any) => {
       <div className="rounded-lg border bg-background p-2 shadow-sm">
         <p className="font-bold text-foreground mb-2">{label}</p>
         <div className="space-y-1">
-          {payload.map((entry: any, index: number) => (
-            <div key={`item-${index}`} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }}></div>
-                  <span className="text-sm text-muted-foreground">{entry.name}:</span>
-              </div>
-              <span className="text-sm font-medium text-foreground">
-                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entry.value)}
-                  ({(entry.value / totalForIssuer * 100).toFixed(1)}%)
-              </span>
-            </div>
-          ))}
+          {payload.map((entry: any, index: number) => {
+            if (entry.value === 0) return null;
+            return (
+                <div key={`item-${index}`} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }}></div>
+                    <span className="text-sm text-muted-foreground">{entry.name}:</span>
+                </div>
+                <span className="text-sm font-medium text-foreground">
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(entry.value)}
+                    ({(entry.value / totalForIssuer * 100).toFixed(1)}%)
+                </span>
+                </div>
+            )
+          })}
         </div>
         <div className="border-t mt-2 pt-2 flex items-center justify-between font-bold">
             <span className="text-sm text-muted-foreground">Total:</span>
@@ -78,12 +81,21 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
     const subtipos = new Set<string>();
 
     data.forEach(item => {
+        subtipos.add(item.subtipo);
+    });
+
+    const allSubtiposArray = Array.from(subtipos);
+
+    data.forEach(item => {
         if (!issuerMap.has(item.emissor)) {
-            issuerMap.set(item.emissor, {});
+            const initialData: { [key: string]: number } = {};
+            allSubtiposArray.forEach(subtipo => {
+                initialData[subtipo] = 0;
+            });
+            issuerMap.set(item.emissor, initialData);
         }
         const issuerData = issuerMap.get(item.emissor)!;
         issuerData[item.subtipo] = (issuerData[item.subtipo] || 0) + item.valor_investido;
-        subtipos.add(item.subtipo);
     });
 
     const allocationByIssuer = Array.from(issuerMap.entries()).map(([name, values]) => ({
@@ -91,12 +103,12 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
         ...values,
     }));
     
-    return { allocationByIssuer, allSubtipos: Array.from(subtipos) };
+    return { allocationByIssuer, allSubtipos: allSubtiposArray };
   }, [data]);
 
   const formatCurrency = (value: number) => {
-    if (value > 1000000) return `${(value / 1000000).toFixed(1)}M`;
-    if (value > 1000) return `${(value / 1000).toFixed(1)}K`;
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
     return value.toString();
   };
   
@@ -134,18 +146,18 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
       <Card>
         <CardHeader>
           <CardTitle>Alocação por Emissor</CardTitle>
-          <CardDescription>Distribuição da sua carteira por emissor e subtipo.</CardDescription>
+          <CardDescription>Valor total investido por emissor, dividido por subtipo.</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={allocationByIssuer} layout="vertical" margin={{ top: 5, right: 20, left: 30, bottom: 5 }} stackOffset="expand">
+            <BarChart data={allocationByIssuer} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis type="number" tickFormatter={(tick) => `${tick * 100}%`} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                <XAxis type="number" tickFormatter={formatCurrency} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
                 <YAxis dataKey="name" type="category" width={80} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
                 <Tooltip content={<CustomTooltipBar />} cursor={{ fill: 'hsl(var(--muted))' }}/>
                 <Legend />
                 {allSubtipos.map((subtipo, index) => (
-                  <Bar key={subtipo} dataKey={subtipo} stackId="a" fill={COLORS[index % COLORS.length]} animationDuration={500} />
+                  <Bar key={subtipo} dataKey={subtipo} name={subtipo} stackId="a" fill={COLORS[index % COLORS.length]} animationDuration={500} />
                 ))}
             </BarChart>
           </ResponsiveContainer>
