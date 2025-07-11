@@ -1,0 +1,88 @@
+"use client"
+
+import { useMemo } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Investment } from "@/lib/types";
+
+interface PerformanceChartProps {
+  data: Investment[];
+}
+
+export default function PerformanceChart({ data }: PerformanceChartProps) {
+  const performanceData = useMemo(() => {
+    if (data.length === 0) return [];
+
+    const dateMap = new Map<string, number>();
+    const sortedData = [...data].sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+    
+    // Aggregate investments by date
+    sortedData.forEach(item => {
+        const currentDate = item.data;
+        dateMap.set(currentDate, (dateMap.get(currentDate) || 0) + item.valor_investido);
+    });
+    
+    // Create a sorted array of unique dates with their aggregated values
+    const aggregatedData = Array.from(dateMap.entries())
+      .map(([date, value]) => ({ date, value }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    // Create a cumulative sum for the line chart
+    let runningTotal = 0;
+    return aggregatedData.map(d => {
+        runningTotal += d.value;
+        return { date: d.date, 'Total Value': runningTotal };
+    });
+
+  }, [data]);
+
+  const formatCurrency = (value: number) => {
+    if (value > 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value > 1000) return `${(value / 1000).toFixed(1)}K`;
+    return value.toString();
+  };
+
+  const tooltipFormatter = (value: number) => {
+     return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  }
+  
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Portfolio Performance</CardTitle>
+        <CardDescription>Cumulative investment value over time.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart
+            data={performanceData}
+            margin={{
+              top: 5,
+              right: 20,
+              left: 30,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))"/>
+            <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <YAxis tickFormatter={(value) => formatCurrency(value)} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <Tooltip 
+              formatter={(value: number) => tooltipFormatter(value)}
+              contentStyle={{
+                backgroundColor: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius)',
+              }}
+              labelStyle={{ color: 'hsl(var(--foreground))' }}
+            />
+            <Legend wrapperStyle={{ color: 'hsl(var(--foreground))' }} />
+            <Line type="monotone" dataKey="Total Value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 2, fill: 'hsl(var(--primary))' }} activeDot={{ r: 6 }} animationDuration={500} />
+          </LineChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+}
