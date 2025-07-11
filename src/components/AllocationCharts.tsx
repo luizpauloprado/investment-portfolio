@@ -11,35 +11,24 @@ interface AllocationChartsProps {
 
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
-const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const { name, value, payload: itemPayload } = payload[0];
-      const percent = itemPayload?.percent;
-      let content = (
-        <>
-            <div className="text-sm text-muted-foreground">
-                Value: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
-            </div>
-        </>
-      );
-      if(percent) {
-        content = (
-            <>
-                {content}
-                <div className="text-sm text-muted-foreground">Allocation: {(percent * 100).toFixed(2)}%</div>
-            </>
-        )
-      }
+const CustomTooltip = ({ active, payload, data }: any) => {
+  if (active && payload && payload.length) {
+    const { name, value } = payload[0];
+    const totalValue = data.reduce((sum: number, entry: any) => sum + entry.value, 0);
+    const percent = (value / totalValue) * 100;
 
-      return (
-        <div className="rounded-lg border bg-background p-2 shadow-sm">
-          <div className="font-bold text-foreground">{name}</div>
-          {content}
+    return (
+      <div className="rounded-lg border bg-background p-2 shadow-sm">
+        <div className="font-bold text-foreground">{name}</div>
+        <div className="text-sm text-muted-foreground">
+            Valor: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
         </div>
-      );
-    }
-  
-    return null;
+        <div className="text-sm text-muted-foreground">Alocação: {percent.toFixed(2)}%</div>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 
@@ -62,8 +51,8 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Allocation by Asset Type</CardTitle>
-          <CardDescription>Distribution of your portfolio by asset type (subtipo).</CardDescription>
+          <CardTitle>Alocação por Tipo de Ativo</CardTitle>
+          <CardDescription>Distribuição da sua carteira por tipo de ativo (subtipo).</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -83,7 +72,7 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<CustomTooltip data={allocationBySubtipo} />} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
@@ -91,8 +80,8 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Allocation by Asset Type</CardTitle>
-          <CardDescription>Bar chart view of your portfolio by asset type (subtipo).</CardDescription>
+          <CardTitle>Alocação por Tipo de Ativo</CardTitle>
+          <CardDescription>Gráfico de barras da sua carteira por tipo de ativo (subtipo).</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -100,7 +89,7 @@ export default function AllocationCharts({ data }: AllocationChartsProps) {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis type="number" tickFormatter={formatCurrency} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
                 <YAxis dataKey="name" type="category" width={80} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))' }}/>
+                <Tooltip content={<CustomTooltip data={allocationBySubtipo} />} cursor={{ fill: 'hsl(var(--muted))' }}/>
                 <Bar dataKey="value" name="Value" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} animationDuration={500}>
                     {allocationBySubtipo.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
