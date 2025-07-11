@@ -60,7 +60,7 @@ export default function Home() {
                 <CardTitle className="mt-4 text-2xl">Upload your Investment Data</CardTitle>
                 <CardDescription>
                   Upload a .csv file to visualize your portfolio. <br />
-                  Expected columns: `data,subtipo,emissor,valor_investido`
+                  Expected columns: `data,subtipo,emissor,valor_investido,taxa_retorno_anual`
                 </CardDescription>
               </CardHeader>
               <CardContent>

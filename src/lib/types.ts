@@ -3,4 +3,5 @@ export interface Investment {
   subtipo: string;
   emissor: string;
   valor_investido: number;
+  taxa_retorno_anual: number;
 }

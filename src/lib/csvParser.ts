@@ -7,7 +7,7 @@ export function parseCSV(csvText: string): Investment[] {
   }
 
   const header = lines[0].split(',').map(h => h.trim());
-  const expectedHeaders = ['data', 'subtipo', 'emissor', 'valor_investido'];
+  const expectedHeaders = ['data', 'subtipo', 'emissor', 'valor_investido', 'taxa_retorno_anual'];
   
   const hasAllHeaders = expectedHeaders.every(h => header.includes(h));
 
@@ -28,6 +28,11 @@ export function parseCSV(csvText: string): Investment[] {
         throw new Error(`Invalid numeric value for 'valor_investido' in row ${i+1}: ${row.valor_investido}`);
     }
 
+    const taxa_retorno_anual = parseFloat(row.taxa_retorno_anual);
+    if (isNaN(taxa_retorno_anual)) {
+        throw new Error(`Invalid numeric value for 'taxa_retorno_anual' in row ${i+1}: ${row.taxa_retorno_anual}`);
+    }
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(row.data)) {
         throw new Error(`Invalid date format for 'data' in row ${i+1}: ${row.data}. Expected YYYY-MM-DD.`);
     }
@@ -37,6 +42,7 @@ export function parseCSV(csvText: string): Investment[] {
       subtipo: row.subtipo,
       emissor: row.emissor,
       valor_investido: valor_investido,
+      taxa_retorno_anual: taxa_retorno_anual,
     });
   }
   

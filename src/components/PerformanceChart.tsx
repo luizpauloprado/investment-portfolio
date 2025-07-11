@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Investment } from "@/lib/types";
+import { differenceInDays, parseISO } from 'date-fns';
 
 interface PerformanceChartProps {
   data: Investment[];
@@ -13,25 +14,34 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
   const performanceData = useMemo(() => {
     if (data.length === 0) return [];
 
-    const dateMap = new Map<string, number>();
-    const sortedData = [...data].sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+    const sortedData = [...data].sort((a, b) => parseISO(a.data).getTime() - parseISO(b.data).getTime());
     
-    // Aggregate investments by date
-    sortedData.forEach(item => {
-        const currentDate = item.data;
-        dateMap.set(currentDate, (dateMap.get(currentDate) || 0) + item.valor_investido);
-    });
+    const allDates = [...new Set(sortedData.map(d => d.data))].sort((a,b) => parseISO(a).getTime() - parseISO(b).getTime());
+
+    if (allDates.length === 0) return [];
+
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    if (!allDates.includes(todayString)) {
+        allDates.push(todayString);
+    }
     
-    // Create a sorted array of unique dates with their aggregated values
-    const aggregatedData = Array.from(dateMap.entries())
-      .map(([date, value]) => ({ date, value }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    
-    // Create a cumulative sum for the line chart
-    let runningTotal = 0;
-    return aggregatedData.map(d => {
-        runningTotal += d.value;
-        return { date: d.date, 'Total Value': runningTotal };
+    return allDates.map(currentDateStr => {
+        const currentDate = parseISO(currentDateStr);
+        let cumulativeValue = 0;
+
+        sortedData.forEach(investment => {
+            const investmentDate = parseISO(investment.data);
+
+            if (investmentDate <= currentDate) {
+                const daysDiff = differenceInDays(currentDate, investmentDate);
+                const yearsDiff = daysDiff / 365.25;
+                const futureValue = investment.valor_investido * Math.pow(1 + investment.taxa_retorno_anual, yearsDiff);
+                cumulativeValue += futureValue;
+            }
+        });
+
+        return { date: currentDateStr, 'Total Value': cumulativeValue };
     });
 
   }, [data]);
@@ -53,7 +63,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
     <Card>
       <CardHeader>
         <CardTitle>Portfolio Performance</CardTitle>
-        <CardDescription>Cumulative investment value over time.</CardDescription>
+        <CardDescription>Cumulative investment value over time, including annual returns.</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
@@ -68,7 +78,7 @@ export default function PerformanceChart({ data }: PerformanceChartProps) {
           >
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))"/>
             <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-            <YAxis tickFormatter={(value) => formatCurrency(value)} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+            <YAxis tickFormatter={(value) => formatCurrency(value)} stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} domain={['dataMin', 'dataMax']}/>
             <Tooltip 
               formatter={(value: number) => tooltipFormatter(value)}
               contentStyle={{
