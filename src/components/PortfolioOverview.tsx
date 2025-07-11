@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Investment } from "@/lib/types";
-import { DollarSign, Wallet, Landmark, TrendingUp } from 'lucide-react';
+import { DollarSign, Wallet, TrendingUp, Landmark } from 'lucide-react';
 import { differenceInDays, parseISO } from 'date-fns';
 
 interface PortfolioOverviewProps {
@@ -20,8 +20,8 @@ export default function PortfolioOverview({ data }: PortfolioOverviewProps) {
     return sum + futureValue;
   }, 0);
 
+  const totalReturn = currentValue - totalInvested;
   const totalAssets = new Set(data.map(item => `${item.emissor}-${item.subtipo}`)).size;
-  const totalIssuers = new Set(data.map(item => item.emissor)).size;
   
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -34,32 +34,42 @@ export default function PortfolioOverview({ data }: PortfolioOverviewProps) {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Current Value</CardTitle>
+          <CardTitle className="text-sm font-medium">Valor Atual</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(currentValue)}</div>
-          <p className="text-xs text-muted-foreground">Total portfolio value today</p>
+          <p className="text-xs text-muted-foreground">Valor estimado da carteira hoje</p>
         </CardContent>
       </Card>
        <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Invested</CardTitle>
+          <CardTitle className="text-sm font-medium">Total Investido</CardTitle>
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(totalInvested)}</div>
-          <p className="text-xs text-muted-foreground">Total value of all contributions</p>
+          <p className="text-xs text-muted-foreground">Soma de todos os aportes</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
+          <CardTitle className="text-sm font-medium">Rendimento Total</CardTitle>
+          <TrendingUp className="h-4 w-4 text-green-500" />
+        </CardHeader>
+        <CardContent>
+          <div className={`text-2xl font-bold ${totalReturn >= 0 ? 'text-green-500' : 'text-destructive'}`}>{formatCurrency(totalReturn)}</div>
+          <p className="text-xs text-muted-foreground">Lucro ou prejuízo da carteira</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total de Ativos</CardTitle>
           <Wallet className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalAssets}</div>
-          <p className="text-xs text-muted-foreground">Number of unique assets</p>
+          <p className="text-xs text-muted-foreground">Número de ativos únicos</p>
         </CardContent>
       </Card>
     </>

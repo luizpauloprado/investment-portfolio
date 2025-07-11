@@ -41,15 +41,15 @@ export default function Home() {
   const hasData = data.length > 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground px-4">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center">
+        <div className="container flex h-16 items-center px-4 md:px-6">
           <Landmark className="h-6 w-6 mr-2 text-primary" />
           <h1 className="text-2xl font-bold font-headline">InvestView</h1>
         </div>
       </header>
 
-      <main className="flex-1 container py-8">
+      <main className="flex-1 container py-8 px-4 md:px-6">
         {!hasData ? (
           <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
             <Card className="w-full max-w-lg text-center shadow-lg animate-fade-in">
@@ -96,7 +96,7 @@ export default function Home() {
                     Upload New File
                 </Button>
             </div>
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <PortfolioOverview data={data} />
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
