@@ -45,8 +45,9 @@ The project follows a standard Next.js application structure with additional dir
 
 ## Screens
 - **View:** 
-<img width="769" height="1036" alt="Captura de Tela 2025-07-10 às 23 19 08" src="https://github.com/user-attachments/assets/208360ce-cb32-4c80-834e-01139bbe9bb7" />
+<img width="909" height="1225" alt="Captura de Tela 2025-07-14 às 17 42 07" src="https://github.com/user-attachments/assets/f64c320c-54ae-4926-9b99-6c6f0623a932" />
 
 - **Upload:**
-<img width="765" height="382" alt="Captura de Tela 2025-07-10 às 23 19 28" src="https://github.com/user-attachments/assets/e29b10e6-a5d8-4f46-a71f-191de7eb8643" />
+<img width="908" height="533" alt="Captura de Tela 2025-07-14 às 17 42 24" src="https://github.com/user-attachments/assets/95dd4fa1-91a4-4b6f-bd0a-187252ddace8" />
+
 
